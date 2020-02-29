@@ -11,12 +11,14 @@
 
 namespace xyqWeb\sms;
 
+use xyqWeb\sms\Contracts\PhoneNumberInterface;
+
 /**
  * Class PhoneNumberInterface.
  *
  * @author xyqweb <xyqweb@126.com>
  */
-class PhoneNumber implements \xyqWeb\sms\Contracts\PhoneNumberInterface
+class PhoneNumber implements PhoneNumberInterface
 {
     /**
      * @var int

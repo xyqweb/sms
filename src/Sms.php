@@ -15,7 +15,7 @@ use Closure;
 use xyqWeb\sms\Contracts\GatewayInterface;
 use xyqWeb\sms\Contracts\MessageInterface;
 use xyqWeb\sms\Contracts\PhoneNumberInterface;
-use xyqWeb\sms\ContractsstrategyInterface;
+use xyqWeb\sms\Contracts\strategyInterface;
 use xyqWeb\sms\Exceptions\InvalidArgumentException;
 use xyqWeb\sms\Gateways\Gateway;
 use xyqWeb\sms\strategies\OrderStrategy;
@@ -75,7 +75,7 @@ class Sms
      * Send a message.
      *
      * @param string|array $to
-     * @param array|\xyqWeb\sms\Contracts\MessageInterface $message
+     * @param array $message
      * @param array $gateways
      *
      * @return array
@@ -83,7 +83,7 @@ class Sms
      * @throws \xyqWeb\sms\Exceptions\InvalidArgumentException
      * @throws \xyqWeb\sms\Exceptions\NoGatewayAvailableException
      */
-    public function send($to, $message, array $gateways = [])
+    public function send($to, array $message, array $gateways = [])
     {
         $to = $this->formatPhoneNumber($to);
         $message = $this->formatMessage($message);
@@ -121,7 +121,7 @@ class Sms
      *
      * @param string|null $strategy
      *
-     * @return \xyqWeb\sms\ContractsstrategyInterface
+     * @return \xyqWeb\sms\Contracts\strategyInterface
      *
      * @throws \xyqWeb\sms\Exceptions\InvalidArgumentException
      */
@@ -131,11 +131,11 @@ class Sms
             $strategy = $this->config->get('default.strategy', OrderStrategy::class);
         }
 
-        if (!\class_exists($strategy)) {
+        if (!class_exists($strategy)) {
             $strategy = __NAMESPACE__ . 'strategies\\' . \ucfirst($strategy);
         }
 
-        if (!\class_exists($strategy)) {
+        if (!class_exists($strategy)) {
             throw new InvalidArgumentException("Unsupported strategy \"{$strategy}\"");
         }
 
@@ -252,7 +252,7 @@ class Sms
      */
     protected function makeGateway($gateway, $config)
     {
-        if (!\class_exists($gateway) || !\in_array(GatewayInterface::class, \class_implements($gateway))) {
+        if (!class_exists($gateway) || !\in_array(GatewayInterface::class, class_implements($gateway))) {
             throw new InvalidArgumentException(sprintf('Class "%s" is a invalid easy-sms gateway.', $gateway));
         }
 
@@ -268,7 +268,7 @@ class Sms
      */
     protected function formatGatewayClassName($name)
     {
-        if (\class_exists($name) && \in_array(GatewayInterface::class, \class_implements($name))) {
+        if (class_exists($name) && \in_array(GatewayInterface::class, class_implements($name))) {
             return $name;
         }
 
@@ -300,7 +300,7 @@ class Sms
             return $number;
         }
 
-        return new PhoneNumber(\trim($number));
+        return new PhoneNumber(trim($number));
     }
 
     /**
